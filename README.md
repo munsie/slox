@@ -1,3 +1,3 @@
 # slox
 
-A description of this package.
+Swift port of the jlox project from https://craftinginterpreters.com/
