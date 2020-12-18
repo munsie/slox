@@ -1,7 +1,7 @@
 import Darwin
 import Foundation
 
-fileprivate func Run(source: String) {
+private func run(source: String) {
   let scanner = Scanner(source: source)
   let tokens = scanner.scanTokens()
 
@@ -9,43 +9,43 @@ fileprivate func Run(source: String) {
   tokens.forEach { print($0) }
 }
 
-fileprivate func RunFile(path: String) {
+private func runFile(path: String) {
   do {
     let source = try String(contentsOfFile: path, encoding: String.Encoding.utf8)
-    Run(source: source)
+    run(source: source)
 
     // indicate an error in the exit code
     if hadError {
       exit(65)
     }
   } catch {
-    Error(message: error.localizedDescription)
-    exit(66) 
+    perror(message: error.localizedDescription)
+    exit(66)
   }
 }
 
-fileprivate func RunPrompt() {
+private func runPrompt() {
   while true {
-    print("> ", terminator: "") 
+    print("> ", terminator: "")
     guard let line = readLine() else {
       break
     }
-    Run(source: line)
+    run(source: line)
     hadError = false
   }
 }
 
-fileprivate struct StderrOutputStream: TextOutputStream {
+private struct StderrOutputStream: TextOutputStream {
   mutating func write(_ string: String) {
     fputs(string, stderr)
   }
 }
 
-fileprivate var standardError = StderrOutputStream()
+private var standardError = StderrOutputStream()
 
-fileprivate var hadError = false
+private var hadError = false
 
-func Report(line: Int = 0, whence: String = "", message: String) {
+func report(line: Int = 0, whence: String = "", message: String) {
   let progname = URL(fileURLWithPath: CommandLine.arguments[0]).lastPathComponent
   print("\(progname): ", terminator: "", to: &standardError)
   if line != 0 {
@@ -55,15 +55,15 @@ func Report(line: Int = 0, whence: String = "", message: String) {
   hadError = true
 }
 
-func Error(line: Int = 0, message: String) {
-  Report(line: line, whence: "", message: message)
+func perror(line: Int = 0, message: String) {
+  report(line: line, whence: "", message: message)
 }
 
 if CommandLine.argc > 2 {
   print("Usage: slox [script]")
   exit(64)
 } else if CommandLine.argc == 2 {
-  RunFile(path: CommandLine.arguments[1])
+  runFile(path: CommandLine.arguments[1])
 } else {
-  RunPrompt()
+  runPrompt()
 }

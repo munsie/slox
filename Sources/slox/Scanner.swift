@@ -2,11 +2,11 @@ import Foundation
 
 class Scanner {
   private let source: String
-  private var tokens = [] as [Token] 
+  private var tokens = [] as [Token]
 
   private var startIndex: String.Index
   private var currentIndex: String.Index
-  
+
   private var line = 1
 
   init(source: String) {
@@ -42,37 +42,9 @@ class Scanner {
     case ">": addToken(match("=") ? .greaterEqual : .greater)
     case "/":
       if match("/") {
-         // a comment goes until the end of the line
-         while !isAtEnd() && peek() != "\n" {
-           _ = advance()
-         }
-         discardToken()
+        comment()
       } else if match("*") {
-        var depth = 1
-        while !isAtEnd() {
-          // break out once we find the trailing */
-          if peek() == "*" && peekNext() == "/" {
-            // consume the */
-            _ = advance()
-            _ = advance()
-            depth -= 1
-            if depth == 0 {
-              // we found the last */, break out
-              break
-            }
-          } else if peek() == "/" && peekNext() == "*" {
-            // consume the /*
-            _ = advance()
-            _ = advance()
-            depth += 1
-          } else {
-            _ = advance()
-          }
-        }
-        if depth != 0 {
-          Error(line: line, message: "Unterminated multi-line comment.")
-        }
-        discardToken()
+        multilineComment()
       } else {
         addToken(.slash)
       }
@@ -90,7 +62,7 @@ class Scanner {
       } else if isAlpha(c) {
         identifier()
       } else {
-        Error(line: line, message: "Unexpected character.")
+        perror(line: line, message: "Unexpected character.")
         discardToken()
       }
     }
@@ -148,7 +120,7 @@ class Scanner {
     }
 
     if isAtEnd() {
-      Error(line: line, message: "Unterminated string.");
+      perror(line: line, message: "Unterminated string.")
       discardToken()
       return
     }
@@ -158,6 +130,42 @@ class Scanner {
 
     // trim the surrounding quotes
     addToken(.string, literal: String(text()!.dropFirst().dropLast()))
+  }
+
+  private func comment() {
+    // a comment goes until the end of the line
+    while !isAtEnd() && peek() != "\n" {
+      _ = advance()
+    }
+    discardToken()
+  }
+
+  private func multilineComment() {
+    var depth = 1
+    while !isAtEnd() {
+      // break out once we find the trailing */
+      if peek() == "*" && peekNext() == "/" {
+        // consume the */
+        _ = advance()
+        _ = advance()
+        depth -= 1
+        if depth == 0 {
+          // we found the last */, break out
+          break
+        }
+      } else if peek() == "/" && peekNext() == "*" {
+        // consume the /*
+        _ = advance()
+        _ = advance()
+        depth += 1
+      } else {
+        _ = advance()
+      }
+    }
+    if depth != 0 {
+      perror(line: line, message: "Unterminated multi-line comment.")
+    }
+    discardToken()
   }
 
   private func match(_ expected: Character) -> Bool {
@@ -202,7 +210,7 @@ class Scanner {
     tokens.append(Token(type: type, lexeme: text(), literal: literal, line: line))
     startIndex = currentIndex
   }
-  
+
   private func discardToken() {
     startIndex = currentIndex
   }

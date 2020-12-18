@@ -21,11 +21,11 @@ enum TokenType {
   case eof
 }
 
-struct Token : CustomStringConvertible {
-  let type : TokenType
-  let lexeme : String?
-  let literal : String?
-  let line : Int
+struct Token: CustomStringConvertible {
+  let type: TokenType
+  let lexeme: String?
+  let literal: String?
+  let line: Int
 
   var description: String {
     return "\(type) \(lexeme ?? "nil") \(literal ?? "nil")"
