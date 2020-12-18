@@ -5,27 +5,26 @@ class ASTPrinter: ExprVisitor {
     return expr.accept(self)
   }
   
-  func visit(_ target: BinaryExpr) -> String {
+  internal func visit(_ target: BinaryExpr) -> String {
     return parenthesize(name: target.oper.lexeme ?? "nil", exprs: target.left, target.right)
   }
   
-  func visit(_ target: GroupingExpr) -> String {
+  internal func visit(_ target: GroupingExpr) -> String {
     return parenthesize(name: "group", exprs: target.expression)
   }
   
-  func visit(_ target: LiteralExpr) -> String {
+  internal func visit(_ target: LiteralExpr) -> String {
     return target.value
   }
   
-  func visit(_ target: UnaryExpr) -> String {
+  internal func visit(_ target: UnaryExpr) -> String {
     return parenthesize(name: target.oper.lexeme ?? "nil", exprs: target.right)
   }
   
   private func parenthesize(name: String, exprs: Expr...) -> String {
     var out = "(\(name)"
     exprs.forEach {
-      out += " "
-      out += $0.accept(self)
+      out += " \($0.accept(self))"
     }
     out += ")"
     return out
