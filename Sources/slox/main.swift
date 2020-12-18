@@ -59,6 +59,20 @@ func perror(line: Int = 0, message: String) {
   report(line: line, whence: "", message: message)
 }
 
+/* Test Code 
+let expr = BinaryExpr(
+             left: UnaryExpr(
+               oper: Token(type: .minus, lexeme: "-", literal: nil, line: 1),
+               right: LiteralExpr(value: "123")),
+             oper: Token(type: .star, lexeme: "*", literal: nil, line: 1),
+             right: GroupingExpr(
+               expression: LiteralExpr(value: "45.67")
+             ))
+             
+let astPrinter = ASTPrinter.init()
+print("\(astPrinter.print(expr: expr))")
+*/
+     
 if CommandLine.argc > 2 {
   print("Usage: slox [script]")
   exit(64)

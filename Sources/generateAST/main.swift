@@ -2,19 +2,24 @@ import Darwin
 import Foundation
 
 private func defineVisitor(output: inout String, baseName: String, types: [String]) {
-  output += "\nprotocol \(baseName)Visitor {\n"
-    
+  output += """
+  
+  protocol \(baseName)Visitor {
+    associatedtype ReturnType
+
+  """
+      
   types.forEach {
     let type = $0.components(separatedBy: ":")
     let structName = type[0].trimmingCharacters(in: .whitespacesAndNewlines)
-    output += "  func visit(_ target: \(structName))\n"
+    output += "  func visit(_ target: \(structName)\(baseName)) -> ReturnType\n"
   }
   
   output += "}\n"
 }
 
 private func defineType(output: inout String, baseName: String, structName: String, fieldList: String) {
-  output += "\nstruct \(structName): \(baseName) {\n"
+  output += "\nstruct \(structName)\(baseName): \(baseName) {\n"
     
   // fields
   let fields = fieldList.components(separatedBy: ", ")
@@ -26,7 +31,7 @@ private func defineType(output: inout String, baseName: String, structName: Stri
   // visitor pattern
   output += """
   
-    func accept(_ visitor: \(baseName)Visitor) {
+    func accept<V: \(baseName)Visitor>(_ visitor: V) -> V.ReturnType {
       visitor.visit(self)
     }\n
   """
@@ -39,7 +44,7 @@ private func defineAST(outputDir: String, baseName: String, types: [String]) {
   import Foundation
   
   protocol \(baseName) {
-    func accept(_ visitor: \(baseName)Visitor)
+    func accept<V: \(baseName)Visitor>(_ visitor: V) -> V.ReturnType
   }
   
   """

@@ -1,47 +1,48 @@
 import Foundation
 
 protocol Expr {
-  func accept(_ visitor: ExprVisitor)
+  func accept<V: ExprVisitor>(_ visitor: V) -> V.ReturnType
 }
 
 protocol ExprVisitor {
-  func visit(_ target: Binary)
-  func visit(_ target: Grouping)
-  func visit(_ target: Literal)
-  func visit(_ target: Unary)
+  associatedtype ReturnType
+  func visit(_ target: BinaryExpr) -> ReturnType
+  func visit(_ target: GroupingExpr) -> ReturnType
+  func visit(_ target: LiteralExpr) -> ReturnType
+  func visit(_ target: UnaryExpr) -> ReturnType
 }
 
-struct Binary: Expr {
+struct BinaryExpr: Expr {
   let left: Expr
   let oper: Token
   let right: Expr
 
-  func accept(_ visitor: ExprVisitor) {
+  func accept<V: ExprVisitor>(_ visitor: V) -> V.ReturnType {
     visitor.visit(self)
   }
 }
 
-struct Grouping: Expr {
+struct GroupingExpr: Expr {
   let expression: Expr
 
-  func accept(_ visitor: ExprVisitor) {
+  func accept<V: ExprVisitor>(_ visitor: V) -> V.ReturnType {
     visitor.visit(self)
   }
 }
 
-struct Literal: Expr {
+struct LiteralExpr: Expr {
   let value: String
 
-  func accept(_ visitor: ExprVisitor) {
+  func accept<V: ExprVisitor>(_ visitor: V) -> V.ReturnType {
     visitor.visit(self)
   }
 }
 
-struct Unary: Expr {
+struct UnaryExpr: Expr {
   let oper: Token
   let right: Expr
 
-  func accept(_ visitor: ExprVisitor) {
+  func accept<V: ExprVisitor>(_ visitor: V) -> V.ReturnType {
     visitor.visit(self)
   }
 }
