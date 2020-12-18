@@ -16,6 +16,10 @@ let package = Package(
             name: "slox",
             dependencies: [],
             exclude: [ "main.swift~", "Scanner.swift~", "Token.swift~", "Expr.swift~" ]),
+        .target(
+            name: "generateAST",
+            dependencies: [],
+            exclude: [ "main.swift~" ]),
         .testTarget(
             name: "sloxTests",
             dependencies: ["slox"])
