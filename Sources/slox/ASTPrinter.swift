@@ -14,7 +14,7 @@ class ASTPrinter: ExprVisitor {
   }
   
   internal func visit(_ expr: LiteralExpr) -> String {
-    return expr.value
+    return expr.value ?? "nil"
   }
   
   internal func visit(_ expr: UnaryExpr) -> String {

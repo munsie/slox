@@ -15,7 +15,7 @@ let package = Package(
         .target(
             name: "slox",
             dependencies: [],
-            exclude: [ "main.swift~", "Scanner.swift~", "Token.swift~", "Expr.swift~", "ASTPrinter.swift~" ]),
+            exclude: [ "main.swift~", "Scanner.swift~", "Token.swift~", "Expr.swift~", "ASTPrinter.swift~", "Parser.swift~" ]),
         .target(
             name: "generateAST",
             dependencies: [],

@@ -31,7 +31,7 @@ struct GroupingExpr: Expr {
 }
 
 struct LiteralExpr: Expr {
-  let value: String
+  let value: String?
 
   func accept<V: ExprVisitor>(_ visitor: V) -> V.ReturnType {
     visitor.visit(self)

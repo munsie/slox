@@ -4,9 +4,16 @@ import Foundation
 private func run(source: String) {
   let scanner = Scanner(source: source)
   let tokens = scanner.scanTokens()
-
-  // for now, just print the tokens
-  tokens.forEach { print($0) }
+  let parser = Parser(tokens: tokens)
+  guard let expr = parser.parse() else { return }
+  
+  // stop if there was a syntax error
+  if hadError {
+    return
+  }
+  
+  let astPrinter = ASTPrinter.init()
+  print("\(astPrinter.print(expr: expr))")
 }
 
 private func runFile(path: String) {
@@ -55,24 +62,18 @@ func report(line: Int = 0, whence: String = "", message: String) {
   hadError = true
 }
 
+func perror(token: Token, message: String) {
+  if token.type == .eof {
+    report(line: token.line, whence: " at end", message: message)
+  } else {
+    report(line: token.line, whence: " at '\(token.lexeme ?? "<empty>")'", message: message)
+  }
+}
+
 func perror(line: Int = 0, message: String) {
   report(line: line, whence: "", message: message)
 }
 
-/* Test Code 
-let expr = BinaryExpr(
-             left: UnaryExpr(
-               oper: Token(type: .minus, lexeme: "-", literal: nil, line: 1),
-               right: LiteralExpr(value: "123")),
-             oper: Token(type: .star, lexeme: "*", literal: nil, line: 1),
-             right: GroupingExpr(
-               expression: LiteralExpr(value: "45.67")
-             ))
-             
-let astPrinter = ASTPrinter.init()
-print("\(astPrinter.print(expr: expr))")
-*/
-     
 if CommandLine.argc > 2 {
   print("Usage: slox [script]")
   exit(64)
