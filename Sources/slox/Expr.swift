@@ -6,10 +6,10 @@ protocol Expr {
 
 protocol ExprVisitor {
   associatedtype ReturnType
-  func visit(_ target: BinaryExpr) -> ReturnType
-  func visit(_ target: GroupingExpr) -> ReturnType
-  func visit(_ target: LiteralExpr) -> ReturnType
-  func visit(_ target: UnaryExpr) -> ReturnType
+  func visit(_ expr: BinaryExpr) -> ReturnType
+  func visit(_ expr: GroupingExpr) -> ReturnType
+  func visit(_ expr: LiteralExpr) -> ReturnType
+  func visit(_ expr: UnaryExpr) -> ReturnType
 }
 
 struct BinaryExpr: Expr {

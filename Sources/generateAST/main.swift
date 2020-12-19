@@ -12,7 +12,7 @@ private func defineVisitor(output: inout String, baseName: String, types: [Strin
   types.forEach {
     let type = $0.components(separatedBy: ":")
     let structName = type[0].trimmingCharacters(in: .whitespacesAndNewlines)
-    output += "  func visit(_ target: \(structName)\(baseName)) -> ReturnType\n"
+    output += "  func visit(_ \(baseName.lowercased()): \(structName)\(baseName)) -> ReturnType\n"
   }
   
   output += "}\n"
